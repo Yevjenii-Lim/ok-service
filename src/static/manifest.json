@@ -1,25 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "Weather extention",
-  "description": "Template Extention from Udemy Course",
+  "name": "OK Service Extention",
+  "description": "Инструмент расчёта себестоимости доставки, растаможки и ремонта автомобилей из США купленных на аукционах copart.com ",
   "version": "1.0",
   "icons": {
-    "16": "weather.png",
-    "46": "weather.png",
-    "128": "weather.png"
+    "16": "logo.png",
+    "46": "logo.png",
+    "128": "logo.png"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Weather Extention",
+    "default_title": "Ok-Service Extention",
     "default_icon": "weather.png"
   },
+  "permissions": ["webRequest", "activeTab"],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://www.copart.com/*"],
       "js": ["content.js"]
     }
   ]
