@@ -11,7 +11,7 @@
   "action": {
     "default_popup": "popup.html",
     "default_title": "Ok-Service Extention",
-    "default_icon": "weather.png"
+    "default_icon": "logo.png"
   },
   "permissions": ["webRequest", "activeTab"],
   "options_page": "options.html",
