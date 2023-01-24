@@ -17,12 +17,14 @@ const App: React.FC<{}> = () => {
 };
 
 function waitForElm(selector) {
+  console.log('wait for element');
   return new Promise((resolve) => {
     if (document.querySelector(selector)) {
       return resolve(document.querySelector(selector));
     }
 
     const observer = new MutationObserver((mutations) => {
+      // console.log(mutations);
       if (document.querySelector(selector)) {
         resolve(document.querySelector(selector));
         observer.disconnect();
@@ -37,10 +39,11 @@ function waitForElm(selector) {
 }
 
 const rootElement = document.createElement('div');
-
 rootElement.setAttribute('id', 'extensionRoot');
 rootElement.classList.add('panel');
 rootElement.classList.add('clr');
+
+let reactRoot;
 
 waitForElm(
   '#bid-information-id > div.print-lot-banner.clearfix.desktop-only.borderNone'
@@ -49,9 +52,7 @@ waitForElm(
   waitForElm('#bid-information-id').then((elm: HTMLElement) => {
     console.log('Element is ready');
     elm.appendChild(rootElement);
-    const reactRoot = ReactDOM.createRoot(
-      document.getElementById('extensionRoot')
-    );
+    reactRoot = ReactDOM.createRoot(document.getElementById('extensionRoot'));
 
     reactRoot.render(
       <React.StrictMode>
@@ -59,4 +60,32 @@ waitForElm(
       </React.StrictMode>
     );
   });
+});
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  // listen for messages sent from background.js
+  if (request.message === 'hello!') {
+    console.log('url changed');
+    setTimeout(() => {
+      waitForElm(
+        '#bid-information-id > div.print-lot-banner.clearfix.desktop-only.borderNone'
+      ).then((elm: HTMLElement) => {
+        elm.style.display = 'none';
+        waitForElm('#bid-information-id').then((elm: HTMLElement) => {
+          console.log('Element is ready');
+          reactRoot.unmount();
+          elm.appendChild(rootElement);
+          reactRoot = ReactDOM.createRoot(
+            document.getElementById('extensionRoot')
+          );
+
+          reactRoot.render(
+            <React.StrictMode>
+              <App />
+            </React.StrictMode>
+          );
+        });
+      });
+    }, 1000);
+  }
 });
